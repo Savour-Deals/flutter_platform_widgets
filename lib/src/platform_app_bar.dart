@@ -4,9 +4,10 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'package:flutter/cupertino.dart' show CupertinoNavigationBar;
+// import 'package:flutter/cupertino.dart' show CupertinoNavigationBar;
 import 'package:flutter/material.dart' show AppBar, Brightness, TextTheme;
 import 'package:flutter/widgets.dart';
+import 'navigation_bar.dart' show CupertinoNavigationBarWithBrightness;
 
 import 'widget_base.dart';
 
@@ -95,7 +96,8 @@ class CupertinoNavigationBarData extends _BaseData {
       this.border,
       this.actionsForegroundColor,
       this.transitionBetweenRoutes,
-      this.heroTag})
+      this.heroTag,
+      this.brightness})
       : super(
             widgetKey: widgetKey,
             title: title,
@@ -111,10 +113,11 @@ class CupertinoNavigationBarData extends _BaseData {
   final bool automaticallyImplyMiddle;
   final String previousPageTitle;
   final EdgeInsetsDirectional padding;
+  final Brightness brightness;
 }
 
 class PlatformAppBar
-    extends PlatformWidgetBase<CupertinoNavigationBar, PreferredSizeWidget> {
+    extends PlatformWidgetBase<CupertinoNavigationBarWithBrightness, PreferredSizeWidget> {
   final Key widgetKey;
 
   final Widget title;
@@ -135,7 +138,8 @@ class PlatformAppBar
       this.trailingActions,
       this.automaticallyImplyLeading,
       this.android,
-      this.ios})
+      this.ios
+      })
       : super(key: key);
 
   @override
@@ -170,7 +174,7 @@ class PlatformAppBar
   }
 
   @override
-  CupertinoNavigationBar createIosWidget(BuildContext context) {
+  CupertinoNavigationBarWithBrightness createIosWidget(BuildContext context) {
     CupertinoNavigationBarData data;
     if (ios != null) {
       data = ios(context);
@@ -185,9 +189,10 @@ class PlatformAppBar
           );
 
     if (data?.heroTag != null) {
-      return CupertinoNavigationBar(
+      return CupertinoNavigationBarWithBrightness(
         key: data?.widgetKey ?? widgetKey,
         middle: data?.title ?? title,
+        brightness: data?.brightness,
         backgroundColor: data?.backgroundColor ?? backgroundColor,
         actionsForegroundColor: data?.actionsForegroundColor,
         automaticallyImplyLeading: data?.automaticallyImplyLeading ??
@@ -204,8 +209,9 @@ class PlatformAppBar
       );
     }
 
-    return CupertinoNavigationBar(
+    return CupertinoNavigationBarWithBrightness(
       key: data?.widgetKey ?? widgetKey,
+      brightness: data?.brightness,
       middle: data?.title ?? title,
       backgroundColor: data?.backgroundColor ?? backgroundColor,
       actionsForegroundColor: data?.actionsForegroundColor,
