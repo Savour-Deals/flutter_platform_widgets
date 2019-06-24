@@ -31,40 +31,42 @@ class _AppState extends State<App> {
       primaryColor: Colors.purple,
     );
 
-    return PlatformApp(
-      title: 'Flutter Platform Widgets',
-      android: (_) => new MaterialAppData(theme: themeData),
-      ios: (_) => new CupertinoAppData(theme: cupertinoTheme),
-      home: LandingPage(() => _switchPlatform()),
+    return PlatformProvider(
+      builder: (BuildContext context) => PlatformApp(
+            title: 'Flutter Platform Widgets',
+            android: (_) => new MaterialAppData(theme: themeData),
+            ios: (_) => new CupertinoAppData(theme: cupertinoTheme),
+            home: LandingPage(),
+          ),
     );
-  }
-
-  /*
-      Need to redraw at the PlatformApp level when switching platforms
-    */
-  _switchPlatform() {
-    if (isMaterial) {
-      setState(() => changeToCupertinoPlatform());
-    } else {
-      setState(() => changeToMaterialPlatform());
-    }
   }
 }
 
 class LandingPage extends StatefulWidget {
-  final VoidCallback switchPlatform;
-
-  LandingPage(this.switchPlatform);
-
   @override
-  LandingPageState createState() {
-    return LandingPageState();
-  }
+  LandingPageState createState() => LandingPageState();
 }
 
 class LandingPageState extends State<LandingPage> {
+  @override
+  initState() {
+    super.initState();
+
+    textControlller = TextEditingController(text: 'text');
+  }
+
   bool switchValue = false;
   double sliderValue = 0.5;
+
+  TextEditingController textControlller;
+
+  _switchPlatform(BuildContext context) {
+    if (isMaterial) {
+      PlatformProvider.of(context).changeToCupertinoPlatform();
+    } else {
+      PlatformProvider.of(context).changeToMaterialPlatform();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +94,7 @@ class LandingPageState extends State<LandingPage> {
             SectionHeader(title: '1. Change Platform'),
             PlatformButton(
               child: PlatformText('Switch Platform'),
-              onPressed: () => widget.switchPlatform(),
+              onPressed: () => _switchPlatform(context),
             ),
             PlatformWidget(
               android: (_) => Text('Currently showing Material'),
@@ -109,6 +111,11 @@ class LandingPageState extends State<LandingPage> {
             PlatformButton(
               child: PlatformText('PlatformButton'),
               onPressed: () {},
+            ),
+            PlatformButton(
+              child: PlatformText('Platform Flat Button'),
+              onPressed: () {},
+              androidFlat: (_) => MaterialFlatButtonData(),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -135,7 +142,9 @@ class LandingPageState extends State<LandingPage> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: PlatformTextField(),
+              child: PlatformTextField(
+                controller: textControlller,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),

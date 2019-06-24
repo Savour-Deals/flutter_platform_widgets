@@ -6,7 +6,7 @@ This package only supports at most the Beta release. Dev or Master channels are 
 
 # Installation
 
-> Pubspec: https://pub.dartlang.org/packages/flutter_platform_widgets
+> Pubspec: https://pub.dev/packages/flutter_platform_widgets
 
 # Widgets
 
@@ -33,6 +33,7 @@ Each `PlatformWidget` provides common properties directly as constructor argumen
 - [PlatformDialogAction](https://github.com/aqwert/flutter_platform_widgets/blob/master/README.md#platformdialogaction)
 - [PlatformCircularProgressIndicator](https://github.com/aqwert/flutter_platform_widgets/blob/master/README.md#platformcircularprogressindicator)
 - [PlatformPageRoute](https://github.com/aqwert/flutter_platform_widgets/blob/master/README.md#platformpageroute)
+- [PlatformProvider](https://github.com/aqwert/flutter_platform_widgets/blob/master/README.md#platformprovider)
 
 ## PlatformWidget
 
@@ -116,7 +117,7 @@ return PlatformTextField(
 
 ## PlatformButton
 
-A button that will render a `RaisedButton` for android or a `CupertinoButton` for iOS.
+A button that will render a `RaisedButton` or `FlatButton` for android or a `CupertinoButton` for iOS.
 
 ```dart
 return PlatformButton(
@@ -135,6 +136,16 @@ return PlatformButton(
   child: PlatformText('Send'),
   android: (_) => MaterialRaisedButtonData(...),
   ios: (_) => CupertinoButtonData(...)
+);
+```
+
+> Note: For android you can use the `FlatButton` instead. To do this use the `MaterialFlatButtonData` on the `androidFlat` argument.
+
+```dart
+return PlatformButton(
+ onPressed: () => print('send'),
+ child: PlatformText('Send'),
+ androidFlat: (_) => MaterialFlatButtonData()
 );
 ```
 
@@ -181,6 +192,7 @@ return PlatformApp(
 ```
 
 #### Enhance
+
 Extend with `WidgetBuilder` for android or iOS.
 
 ```dart
@@ -403,6 +415,30 @@ This function can be used within the `Navigator` to push either the `MaterialPag
   );
 ```
 
+## PlatformProvider
+
+A Provider that provides access to the functions of swicthing platforms which can be accessed from any screen.
+
+Requires to be placed at the root (above MaterialApp, CupertinoApp or PlatformApp).
+
+```dart
+  return PlatformProvider(
+    builder: (BuildContext context) MaterialApp(...)
+  );
+```
+
+And to switch platforms...
+
+```
+PlatformProvider.of(context).changeToMaterialPlatform();
+```
+
+or
+
+```
+PlatformProvider.of(context).changeToCupertinoPlatform();
+```
+
 # TODO
 
 - UI / Unit Tests.
@@ -413,21 +449,6 @@ This function can be used within the `Navigator` to push either the `MaterialPag
 When importing `flutter_platform_widgets` you can check `isMaterial` or `isCupertino` to determine what style will be used. This is independent to `Platform.isAndroid` or `Platform.isIOS` from `'import 'dart:io'`
 
 See the example code for how this is used.
-
-# Known Limitations
-
-- Setting `BottomNavigationBarType.shifting` will cause the icon and text to render white: https://github.com/flutter/flutter/issues/15280.
-
-Best to set to fixed if the number of navigation items are 4 or more.
-
-```dart
-return PlatformNavBar(
-   android: (_) => MaterialNavBarData(
-      type: BottomNavigationBarType.fixed,
-    ),
-```
-
-- Setting `BottomNavigationBar.fixedColor` to anything has no effect.
 
 # Issues and Feedback
 
