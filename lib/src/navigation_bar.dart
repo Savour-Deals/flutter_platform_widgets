@@ -2202,8 +2202,9 @@ CreateRectTween _linearTranslateWithLargestRectSizeTween = (Rect begin, Rect end
   );
 };
 
-final TransitionBuilder _navBarHeroLaunchPadBuilder = (
+final Visibility Function(BuildContext context, Size size, Widget child) _navBarHeroLaunchPadBuilder = (
   BuildContext context,
+  Size size,
   Widget child,
 ) {
   assert(child is _TransitionableNavigationBar);
