@@ -60,7 +60,8 @@ class MaterialFlatButtonData extends _BaseData {
       this.focusColor,
       this.hoverColor,
       this.focusNode,
-      this.hoverElevation})
+      this.hoverElevation,
+      this.autofocus})
       : super(
             widgetKey: widgetKey,
             child: child,
@@ -89,6 +90,7 @@ class MaterialFlatButtonData extends _BaseData {
   final Color hoverColor;
   final FocusNode focusNode;
   final double hoverElevation;
+  final bool autofocus;
 }
 
 class MaterialRaisedButtonData extends _BaseData {
@@ -117,7 +119,8 @@ class MaterialRaisedButtonData extends _BaseData {
       this.focusColor,
       this.hoverColor,
       this.focusNode,
-      this.hoverElevation})
+      this.hoverElevation,
+      this.autofocus})
       : super(
             widgetKey: widgetKey,
             child: child,
@@ -146,6 +149,7 @@ class MaterialRaisedButtonData extends _BaseData {
   final Color hoverColor;
   final FocusNode focusNode;
   final double hoverElevation;
+  final bool autofocus;
 }
 
 class CupertinoButtonData extends _BaseData {
@@ -225,6 +229,7 @@ class PlatformButton
         focusColor: dataFlat?.focusColor,
         focusNode: dataFlat?.focusNode,
         hoverColor: dataFlat?.hoverColor,
+        autofocus: dataFlat?.autofocus ?? false,
       );
     }
 
@@ -259,6 +264,7 @@ class PlatformButton
       hoverColor: dataRaised?.hoverColor,
       focusNode: dataRaised?.focusNode,
       hoverElevation: dataRaised?.hoverElevation,
+      autofocus: dataRaised?.autofocus ?? false,
     );
   }
 

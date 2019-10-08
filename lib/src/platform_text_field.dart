@@ -18,7 +18,6 @@ import 'package:flutter/services.dart'
         TextCapitalization;
 import 'package:flutter/widgets.dart';
 
-import 'platform.dart';
 import 'widget_base.dart';
 
 const TextStyle _kDefaultTextStyle = TextStyle(
@@ -81,6 +80,10 @@ class MaterialTextFieldData {
     this.scrollPhysics,
     this.strutStyle,
     this.scrollController,
+    this.readOnly,
+    this.showCursor,
+    this.textAlignVertical,
+    this.toolbarOptions,
   });
 
   final Key widgetKey;
@@ -118,6 +121,10 @@ class MaterialTextFieldData {
   final ScrollPhysics scrollPhysics;
   final StrutStyle strutStyle;
   final ScrollController scrollController;
+  final bool readOnly;
+  final bool showCursor;
+  final TextAlignVertical textAlignVertical;
+  final ToolbarOptions toolbarOptions;
 }
 
 class CupertinoTextFieldData {
@@ -162,6 +169,11 @@ class CupertinoTextFieldData {
     this.strutStyle,
     this.enableInteractiveSelection,
     this.scrollController,
+    this.readOnly,
+    this.showCursor,
+    this.textAlignVertical,
+    this.toolbarOptions,
+    this.onTap,
   });
 
   final Key widgetKey;
@@ -204,6 +216,11 @@ class CupertinoTextFieldData {
   final StrutStyle strutStyle;
   final bool enableInteractiveSelection;
   final ScrollController scrollController;
+  final bool readOnly;
+  final bool showCursor;
+  final TextAlignVertical textAlignVertical;
+  final ToolbarOptions toolbarOptions;
+  final GestureTapCallback onTap;
 }
 
 class PlatformTextField
@@ -228,6 +245,7 @@ class PlatformTextField
   final int maxLines;
   final int maxLength;
   final bool maxLengthEnforced;
+
   final ValueChanged<String> onChanged;
   final VoidCallback onEditingComplete;
   final ValueChanged<String> onSubmitted;
@@ -240,7 +258,13 @@ class PlatformTextField
   final int minLines;
   final ScrollPhysics scrollPhysics;
   final StrutStyle strutStyle;
+  final bool enableInteractiveSelection;
   final ScrollController scrollController;
+  final GestureTapCallback onTap;
+  final bool readOnly;
+  final bool showCursor;
+  final TextAlignVertical textAlignVertical;
+  final ToolbarOptions toolbarOptions;
 
   final Color cursorColor;
   final Brightness keyboardAppearance;
@@ -254,7 +278,7 @@ class PlatformTextField
       TextInputType keyboardType,
       this.textInputAction,
       this.textCapitalization = TextCapitalization.none,
-      TextStyle style,
+      this.style,
       this.textAlign = TextAlign.start,
       this.autofocus = false,
       this.obscureText = false,
@@ -269,7 +293,7 @@ class PlatformTextField
       this.enabled,
       this.cursorWidth = 2.0,
       this.cursorRadius,
-      Color cursorColor,
+      this.cursorColor,
       this.keyboardAppearance,
       this.scrollPadding = const EdgeInsets.all(20.0),
       this.dragStartBehavior,
@@ -277,13 +301,16 @@ class PlatformTextField
       this.expands,
       this.scrollPhysics,
       this.strutStyle,
+      this.enableInteractiveSelection = true,
       this.scrollController,
+      this.onTap,
+      this.readOnly,
+      this.showCursor,
+      this.textAlignVertical,
+      this.toolbarOptions,
       this.android,
       this.ios})
-      : cursorColor =
-            cursorColor ?? (isMaterial ? null : CupertinoColors.activeBlue),
-        style = style ?? (isMaterial ? null : _kDefaultTextStyle),
-        keyboardType = keyboardType ??
+      : keyboardType = keyboardType ??
             (maxLines == 1 ? TextInputType.text : TextInputType.multiline),
         super(key: key);
 
@@ -321,8 +348,6 @@ class PlatformTextField
       textInputAction: data?.textInputAction ?? textInputAction,
       decoration: data?.decoration ?? const InputDecoration(),
       textDirection: data?.textDirection,
-      enableInteractiveSelection: data?.enableInteractiveSelection ?? false,
-      onTap: data?.onTap,
       buildCounter: data?.buildCounter,
       dragStartBehavior: data?.dragStartBehavior ??
           dragStartBehavior ??
@@ -331,7 +356,14 @@ class PlatformTextField
       minLines: data?.minLines ?? minLines,
       scrollPhysics: data?.scrollPhysics ?? scrollPhysics,
       strutStyle: data?.strutStyle ?? strutStyle,
+      enableInteractiveSelection:
+          data?.enableInteractiveSelection ?? enableInteractiveSelection,
       scrollController: data?.scrollController ?? scrollController,
+      onTap: data?.onTap ?? onTap,
+      readOnly: data?.readOnly ?? readOnly ?? false,
+      showCursor: data?.showCursor ?? showCursor,
+      textAlignVertical: data?.textAlignVertical ?? textAlignVertical,
+      toolbarOptions: data?.toolbarOptions ?? toolbarOptions,
     );
   }
 
@@ -347,7 +379,8 @@ class PlatformTextField
       autocorrect: data?.autocorrect ?? autocorrect,
       autofocus: data?.autofocus ?? autofocus,
       controller: data?.controller ?? controller,
-      cursorColor: data?.cursorColor ?? cursorColor,
+      cursorColor:
+          data?.cursorColor ?? cursorColor ?? CupertinoColors.activeBlue,
       cursorRadius: data?.cursorRadius ?? cursorRadius,
       cursorWidth: data?.cursorWidth ?? cursorWidth,
       enabled: data?.enabled ?? enabled,
@@ -363,7 +396,7 @@ class PlatformTextField
       onEditingComplete: data?.onEditingComplete ?? onEditingComplete,
       onSubmitted: data?.onSubmitted ?? onSubmitted,
       scrollPadding: data?.scrollPadding ?? scrollPadding,
-      style: data?.style ?? style,
+      style: data?.style ?? style ?? _kDefaultTextStyle,
       textAlign: data?.textAlign ?? textAlign,
       textCapitalization: data?.textCapitalization ?? textCapitalization,
       textInputAction: data?.textInputAction ?? textInputAction,
@@ -383,8 +416,14 @@ class PlatformTextField
       minLines: data?.minLines ?? minLines,
       scrollPhysics: data?.scrollPhysics ?? scrollPhysics,
       strutStyle: data?.strutStyle ?? strutStyle,
-      enableInteractiveSelection: data?.enableInteractiveSelection,
+      enableInteractiveSelection:
+          data?.enableInteractiveSelection ?? enableInteractiveSelection,
       scrollController: data?.scrollController ?? scrollController,
+      onTap: data?.onTap ?? onTap,
+      readOnly: data?.readOnly ?? readOnly ?? false,
+      showCursor: data?.showCursor ?? showCursor,
+      textAlignVertical: data?.textAlignVertical ?? textAlignVertical,
+      toolbarOptions: data?.toolbarOptions ?? toolbarOptions,
     );
   }
 }

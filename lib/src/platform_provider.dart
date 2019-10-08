@@ -1,6 +1,5 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
-import 'platform.dart' as fpw;
 
 /// A Provider that provides access to the functions of swicthing platforms.
 ///
@@ -24,11 +23,11 @@ import 'platform.dart' as fpw;
 /// PlatformProvider.of(context).changeToCupertinoPlatform();
 /// ```
 class PlatformProvider extends StatefulWidget {
-  const PlatformProvider({
-    @required this.builder,
-  }) : assert(builder != null);
+  const PlatformProvider({@required this.builder, this.initialPlatform})
+      : assert(builder != null);
 
   final WidgetBuilder builder;
+  final TargetPlatform initialPlatform;
 
   static PlatformProviderState of(BuildContext context) {
     return context
@@ -40,29 +39,41 @@ class PlatformProvider extends StatefulWidget {
 }
 
 class PlatformProviderState extends State<PlatformProvider> {
-  bool get isCupertino => fpw.isCupertino;
-  bool get isMaterial => fpw.isMaterial;
+  TargetPlatform platform;
+
+  @override
+  void initState() {
+    super.initState();
+    platform = widget.initialPlatform;
+  }
 
   void changeToMaterialPlatform() {
     setState(() {
-      fpw.changeToMaterialPlatform();
+      platform = TargetPlatform.android;
     });
   }
 
   void changeToCupertinoPlatform() {
     setState(() {
-      fpw.changeToCupertinoPlatform();
+      platform = TargetPlatform.iOS;
     });
   }
 
   void changeToAutoDetectPlatform() {
     setState(() {
-      fpw.changeToAutoDetectPlatform();
+      platform = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder(context);
+    if (platform == null) return widget.builder(context);
+
+    return Theme(
+      data: Theme.of(context).copyWith(platform: platform),
+      child: Builder(
+        builder: (context) => widget.builder(context),
+      ),
+    );
   }
 }

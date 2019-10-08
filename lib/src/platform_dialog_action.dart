@@ -39,6 +39,7 @@ class MaterialDialogActionData extends _BaseData {
     this.focusColor,
     this.hoverColor,
     this.focusNode,
+    this.autofocus,
   }) : super(child: child, onPressed: onPressed);
 
   final Key widgetKey;
@@ -58,6 +59,7 @@ class MaterialDialogActionData extends _BaseData {
   final Color focusColor;
   final Color hoverColor;
   final FocusNode focusNode;
+  final bool autofocus;
 }
 
 class CupertinoDialogActionData extends _BaseData {
@@ -118,6 +120,7 @@ class PlatformDialogAction
       focusColor: data?.focusColor,
       focusNode: data?.focusNode,
       hoverColor: data?.hoverColor,
+      autofocus: data?.autofocus ?? false,
     );
   }
 

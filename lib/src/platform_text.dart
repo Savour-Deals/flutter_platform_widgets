@@ -8,48 +8,56 @@ import 'package:flutter/widgets.dart';
 
 import 'platform.dart' show isMaterial;
 
-String formatData(String data) {
-  if (isMaterial) {
+String formatData(BuildContext context, String data) {
+  if (isMaterial(context)) {
     return data?.toUpperCase();
   }
   return data;
 }
 
-class PlatformText extends StatelessWidget {
-  final Text _text;
+typedef Text _TextBuilder(BuildContext context);
 
-  PlatformText(String data,
-      {Key key,
-      TextStyle style,
-      TextAlign textAlign,
-      TextDirection textDirection,
-      bool softWrap,
-      TextOverflow overflow,
-      double textScaleFactor,
-      int maxLines,
-      Locale locale,
-      String semanticsLabel,
-      StrutStyle strutStyle,
-      TextWidthBasis textWidthBasis})
-      : _text = Text(
-          formatData(data),
-          key: key,
-          style: style,
-          textAlign: textAlign,
-          textDirection: textDirection,
-          softWrap: softWrap,
-          overflow: overflow,
-          textScaleFactor: textScaleFactor,
-          maxLines: maxLines,
-          locale: locale,
-          semanticsLabel: semanticsLabel,
-          strutStyle: strutStyle,
-          textWidthBasis: textWidthBasis,
-        ),
-        super(key: key);
+class PlatformText extends StatelessWidget {
+  final _TextBuilder _textBuilder;
+
+  PlatformText._(Key key, this._textBuilder) : super(key: key);
+
+  factory PlatformText(
+    String data, {
+    Key key,
+    TextStyle style,
+    TextAlign textAlign,
+    TextDirection textDirection,
+    bool softWrap,
+    TextOverflow overflow,
+    double textScaleFactor,
+    int maxLines,
+    Locale locale,
+    String semanticsLabel,
+    StrutStyle strutStyle,
+    TextWidthBasis textWidthBasis,
+  }) {
+    return PlatformText._(
+        key,
+        (BuildContext context) => Text(
+              formatData(context, data),
+              key: key,
+              style: style,
+              textAlign: textAlign,
+              textDirection: textDirection,
+              softWrap: softWrap,
+              overflow: overflow,
+              textScaleFactor: textScaleFactor,
+              maxLines: maxLines,
+              locale: locale,
+              semanticsLabel: semanticsLabel,
+              strutStyle: strutStyle,
+              textWidthBasis: textWidthBasis,
+            ));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return _text;
+    return _textBuilder(context);
   }
 }

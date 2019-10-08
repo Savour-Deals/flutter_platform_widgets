@@ -7,10 +7,10 @@
 import 'package:flutter/cupertino.dart'
     show
         CupertinoPageScaffold,
-        CupertinoTabScaffold,
-        ObstructingPreferredSizeWidget,
         CupertinoTabBar,
-        CupertinoTabController;
+        CupertinoTabController,
+        CupertinoTabScaffold,
+        ObstructingPreferredSizeWidget;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart'
     show
@@ -33,26 +33,27 @@ abstract class _BaseData {
 }
 
 class MaterialScaffoldData extends _BaseData {
-  MaterialScaffoldData(
-      {Color backgroundColor,
-      Widget body,
-      Key widgetKey,
-      this.appBar,
-      this.bottomNavBar,
-      this.drawer,
-      this.endDrawer,
-      this.floatingActionButton,
-      this.floatingActionButtonAnimator,
-      this.floatingActionButtonLocation,
-      this.persistentFooterButtons,
-      this.primary,
-      this.resizeToAvoidBottomPadding,
-      this.bottomSheet,
-      this.drawerDragStartBehavior,
-      this.extendBody,
-      this.resizeToAvoidBottomInset,
-      this.drawerScrimColor})
-      : super(
+  MaterialScaffoldData({
+    Color backgroundColor,
+    Widget body,
+    Key widgetKey,
+    this.appBar,
+    this.bottomNavBar,
+    this.drawer,
+    this.endDrawer,
+    this.floatingActionButton,
+    this.floatingActionButtonAnimator,
+    this.floatingActionButtonLocation,
+    this.persistentFooterButtons,
+    this.primary,
+    this.resizeToAvoidBottomPadding,
+    this.bottomSheet,
+    this.drawerDragStartBehavior,
+    this.extendBody,
+    this.resizeToAvoidBottomInset,
+    this.drawerScrimColor,
+    this.drawerEdgeDragWidth,
+  }) : super(
             widgetKey: widgetKey, backgroundColor: backgroundColor, body: body);
 
   final PreferredSizeWidget appBar;
@@ -70,6 +71,7 @@ class MaterialScaffoldData extends _BaseData {
   final bool extendBody;
   final bool resizeToAvoidBottomInset;
   final Color drawerScrimColor;
+  final double drawerEdgeDragWidth;
 }
 
 class CupertinoPageScaffoldData extends _BaseData {
@@ -84,7 +86,10 @@ class CupertinoPageScaffoldData extends _BaseData {
       this.backgroundColorTab,
       this.controller})
       : super(
-            widgetKey: widgetKey, backgroundColor: backgroundColor, body: body);
+          widgetKey: widgetKey,
+          backgroundColor: backgroundColor,
+          body: body,
+        );
 
   final ObstructingPreferredSizeWidget navigationBar;
   final CupertinoTabBar bottomTabBar;
@@ -149,6 +154,7 @@ class PlatformScaffold extends PlatformWidgetBase<Widget, Scaffold> {
       extendBody: data?.extendBody ?? false,
       resizeToAvoidBottomInset: data?.resizeToAvoidBottomInset,
       drawerScrimColor: data?.drawerScrimColor,
+      drawerEdgeDragWidth: data?.drawerEdgeDragWidth,
     );
   }
 

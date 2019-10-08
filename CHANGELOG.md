@@ -1,16 +1,48 @@
-## [0.11.5] - June 23, 2019
+## [0.20.1] - September 23, 2019
+
+#### (Flutter version support: v1.9.1+hotfix.2)
+
+- Added a `Builder` to allow for children of `PlatformProvider` to get the Theme change on the builder argument.
+
+## [0.20.0] - September 16, 2019
+
+#### (Flutter version support: v1.9.1+hotfix.2)
+
+- Switching of Platform based off theme. (thanks stefanrusek)
+- From now on the only way to dynamically change the target platform is to use `PlatformProvider`
+- `PlatformIconButton` can now take a Widget instead of it having to be an Icon (thanks GillesMontyne)
+
+## [0.13.0] - September 13, 2019
+
+#### (Flutter version support: v1.9.1+hotfix.2)
+
+- Updated all widgets compatible with Flutter v 1.9.1
+- Added showPlatformModalSheet
+- Added check for web to allow web to compile (thanks cbenhagen)
+
+## [0.12.0] - June 24, 2019
+
+#### (Flutter version support: v1.5.4-hotfix.2)
+
+- Added PlatformProvider so that swicthing platforms can rebuild the tree
+- Added Material Flat button option for PlatformButton (see Readme)
+- Fixed example issue
+
+## [0.11.5] - June 23, 2019 (Do not use)
 
 #### (Flutter version support: v1.6.3)
 
 - Added PlatformProvider so that swicthing platforms can rebuild the tree
+- Due to pub.dev supporting only Stable channel, version 0.11.5 is not supported.
 
-## [0.11.0] - June 22, 2019
+## [0.11.0] - June 22, 2019 (Do not use)
 
 #### (Flutter version support: v1.6.3)
 
 - Updated all widgets compatible with Flutter v 1.6.3
 - Added Material Flat button option for PlatformButton (see Readme)
 - Fixed example issue
+- Due to pub.dev supporting only Stable channel, version 0.11.0 is not supported.
 
 ## [0.10.0] - May 12, 2019
 

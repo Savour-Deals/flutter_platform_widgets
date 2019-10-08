@@ -5,7 +5,7 @@
  */
 
 import 'package:flutter/cupertino.dart' show CupertinoApp, CupertinoThemeData;
-import 'package:flutter/material.dart' show MaterialApp, ThemeData;
+import 'package:flutter/material.dart' show MaterialApp, Theme, ThemeData, ThemeMode;
 import 'package:flutter/widgets.dart';
 
 import 'widget_base.dart';
@@ -85,7 +85,8 @@ class MaterialAppData extends _BaseData {
       bool debugShowCheckedModeBanner,
       this.theme,
       this.debugShowMaterialGrid,
-      this.darkTheme})
+      this.darkTheme,
+      this.themeMode})
       : super(
             widgetKey: widgetKey,
             navigatorKey: navigatorKey,
@@ -113,6 +114,7 @@ class MaterialAppData extends _BaseData {
   final ThemeData theme;
   final bool debugShowMaterialGrid;
   final ThemeData darkTheme;
+  final ThemeMode themeMode;
 }
 
 class CupertinoAppData extends _BaseData {
@@ -260,9 +262,10 @@ class PlatformApp extends PlatformWidgetBase<CupertinoApp, MaterialApp> {
           data?.showSemanticsDebugger ?? showSemanticsDebugger,
       debugShowCheckedModeBanner:
           data?.debugShowCheckedModeBanner ?? debugShowCheckedModeBanner,
-      theme: data?.theme,
+      theme: (data?.theme ?? Theme.of(context)).copyWith(platform: TargetPlatform.android),
       debugShowMaterialGrid: data?.debugShowMaterialGrid ?? false,
-      darkTheme: data?.darkTheme,
+      darkTheme: data?.darkTheme?.copyWith(platform: TargetPlatform.android),
+      themeMode: data?.themeMode ?? ThemeMode.system,
     );
   }
 

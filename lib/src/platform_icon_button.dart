@@ -20,7 +20,7 @@ abstract class _BaseData {
       this.disabledColor});
 
   final Key widgetKey;
-  final Icon icon;
+  final Widget icon;
   final VoidCallback onPressed;
   final EdgeInsets padding;
   final Color color;
@@ -30,7 +30,7 @@ abstract class _BaseData {
 class CupertinoIconButtonData extends _BaseData {
   CupertinoIconButtonData(
       {Key widgetKey,
-      Icon icon,
+      Widget icon,
       VoidCallback onPressed,
       EdgeInsets padding,
       Color color,
@@ -54,7 +54,7 @@ class CupertinoIconButtonData extends _BaseData {
 class MaterialIconButtonData extends _BaseData {
   MaterialIconButtonData({
     Key widgetKey,
-    Icon icon,
+    Widget icon,
     VoidCallback onPressed,
     EdgeInsets padding,
     Color color,
@@ -67,6 +67,7 @@ class MaterialIconButtonData extends _BaseData {
     this.focusColor,
     this.hoverColor,
     this.focusNode,
+    this.autofocus,
   }) : super(
             widgetKey: widgetKey,
             icon: icon,
@@ -83,14 +84,15 @@ class MaterialIconButtonData extends _BaseData {
   final Color focusColor;
   final Color hoverColor;
   final FocusNode focusNode;
+  final bool autofocus;
 }
 
 class PlatformIconButton extends PlatformWidgetBase<CupertinoButton, Widget> {
   final Key widgetKey;
 
-  final Icon icon;
-  final Icon iosIcon;
-  final Icon androidIcon;
+  final Widget icon;
+  final Widget iosIcon;
+  final Widget androidIcon;
   final VoidCallback onPressed;
   final Color color;
   final EdgeInsets padding;
@@ -135,6 +137,7 @@ class PlatformIconButton extends PlatformWidgetBase<CupertinoButton, Widget> {
       focusColor: data?.focusColor,
       focusNode: data?.focusNode,
       hoverColor: data?.hoverColor,
+      autofocus: data?.autofocus ?? false,
     );
   }
 

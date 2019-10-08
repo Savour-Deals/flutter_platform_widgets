@@ -1,11 +1,16 @@
-import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoThemeData;
-import 'package:flutter/material.dart' show ThemeData, Colors, Icons;
+import 'package:flutter/cupertino.dart'
+    show
+        CupertinoActionSheet,
+        CupertinoActionSheetAction,
+        CupertinoIcons,
+        CupertinoThemeData;
+import 'package:flutter/material.dart' show Colors, Icons, ThemeData;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
-import 'lib/listViewHeaderPage.dart';
-import 'lib/listViewPage.dart';
-import 'lib/tabbedPage.dart';
+import 'listViewHeaderPage.dart';
+import 'listViewPage.dart';
+import 'tabbedPage.dart';
 
 void main() => runApp(Main());
 
@@ -31,13 +36,17 @@ class _AppState extends State<App> {
       primaryColor: Colors.purple,
     );
 
+    // Example of optionally setting the platform upfront.
+    //final initialPlatform = TargetPlatform.iOS;
+
     return PlatformProvider(
+      //initialPlatform: initialPlatform,
       builder: (BuildContext context) => PlatformApp(
-            title: 'Flutter Platform Widgets',
-            android: (_) => new MaterialAppData(theme: themeData),
-            ios: (_) => new CupertinoAppData(theme: cupertinoTheme),
-            home: LandingPage(),
-          ),
+        title: 'Flutter Platform Widgets',
+        android: (_) => new MaterialAppData(theme: themeData),
+        ios: (_) => new CupertinoAppData(theme: cupertinoTheme),
+        home: LandingPage(),
+      ),
     );
   }
 }
@@ -61,7 +70,7 @@ class LandingPageState extends State<LandingPage> {
   TextEditingController textControlller;
 
   _switchPlatform(BuildContext context) {
-    if (isMaterial) {
+    if (isMaterial(context)) {
       PlatformProvider.of(context).changeToCupertinoPlatform();
     } else {
       PlatformProvider.of(context).changeToMaterialPlatform();
@@ -157,13 +166,19 @@ class LandingPageState extends State<LandingPage> {
               onPressed: () => _showExampleDialog(),
             ),
             Divider(),
-            SectionHeader(title: '4. Navigation'),
+            SectionHeader(title: '4. Popup/Sheet'),
+            PlatformButton(
+              child: PlatformText('Show Popup/Sheet'),
+              onPressed: () => _showPopupSheet(),
+            ),
+            Divider(),
+            SectionHeader(title: '5. Navigation'),
             PlatformButton(
               child: PlatformText('Open Tabbed Page'),
               onPressed: () => _openPage((_) => new TabbedPage()),
             ),
             Divider(),
-            SectionHeader(title: '5. Advanced'),
+            SectionHeader(title: '6. Advanced'),
             PlatformButton(
               child: PlatformText('Page with ListView'),
               onPressed: () => _openPage((_) => new ListViewPage()),
@@ -171,9 +186,9 @@ class LandingPageState extends State<LandingPage> {
             PlatformWidget(
               android: (_) => Container(), //this is for iOS only
               ios: (_) => PlatformButton(
-                    child: PlatformText('iOS Page with Colored Header'),
-                    onPressed: () => _openPage((_) => new ListViewHeaderPage()),
-                  ),
+                child: PlatformText('iOS Page with Colored Header'),
+                onPressed: () => _openPage((_) => new ListViewHeaderPage()),
+              ),
             ),
           ],
         ),
@@ -185,7 +200,77 @@ class LandingPageState extends State<LandingPage> {
     Navigator.push(
       context,
       platformPageRoute(
+        context: context,
         builder: pageToDisplayBuilder,
+      ),
+    );
+  }
+
+  _showPopupSheet() {
+    showPlatformModalSheet(
+      context: context,
+      builder: (_) => PlatformWidget(
+        android: (_) => _androidPopupContent(),
+        ios: (_) => _cupertinoSheetContent(),
+      ),
+    );
+  }
+
+  Widget _androidPopupContent() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: <Widget>[
+          GestureDetector(
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              child: PlatformText('Option 1'),
+            ),
+            onTap: () => Navigator.pop(context),
+          ),
+          GestureDetector(
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              child: PlatformText('Option 2'),
+            ),
+            onTap: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _cupertinoSheetContent() {
+    return CupertinoActionSheet(
+      title: const Text('Favorite Dessert'),
+      message:
+          const Text('Please select the best dessert from the options below.'),
+      actions: <Widget>[
+        CupertinoActionSheetAction(
+          child: const Text('Profiteroles'),
+          onPressed: () {
+            Navigator.pop(context, 'Profiteroles');
+          },
+        ),
+        CupertinoActionSheetAction(
+          child: const Text('Cannolis'),
+          onPressed: () {
+            Navigator.pop(context, 'Cannolis');
+          },
+        ),
+        CupertinoActionSheetAction(
+          child: const Text('Trifle'),
+          onPressed: () {
+            Navigator.pop(context, 'Trifle');
+          },
+        ),
+      ],
+      cancelButton: CupertinoActionSheetAction(
+        child: const Text('Cancel'),
+        isDefaultAction: true,
+        onPressed: () {
+          Navigator.pop(context, 'Cancel');
+        },
       ),
     );
   }
@@ -194,21 +279,21 @@ class LandingPageState extends State<LandingPage> {
     showPlatformDialog(
       context: context,
       builder: (_) => PlatformAlertDialog(
-            title: Text('Alert'),
-            content: Text('Some content'),
-            actions: <Widget>[
-              PlatformDialogAction(
-                android: (_) => MaterialDialogActionData(),
-                ios: (_) => CupertinoDialogActionData(),
-                child: PlatformText('Cancel'),
-                onPressed: () => Navigator.pop(context),
-              ),
-              PlatformDialogAction(
-                child: PlatformText('OK'),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
+        title: Text('Alert'),
+        content: Text('Some content'),
+        actions: <Widget>[
+          PlatformDialogAction(
+            android: (_) => MaterialDialogActionData(),
+            ios: (_) => CupertinoDialogActionData(),
+            child: PlatformText('Cancel'),
+            onPressed: () => Navigator.pop(context),
           ),
+          PlatformDialogAction(
+            child: PlatformText('OK'),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
     );
   }
 }
