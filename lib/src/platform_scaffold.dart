@@ -226,8 +226,8 @@ class PlatformScaffold extends PlatformWidgetBase<Widget, Scaffold> {
       final double topPadding =
           navigationBar.preferredSize.height + existingMediaQuery.padding.top;
 
-      final obstruct = navigationBar.fullObstruction == null ||
-          navigationBar.fullObstruction;
+      final obstruct = navigationBar.shouldFullyObstruct(context) == null ||
+          navigationBar.shouldFullyObstruct(context);
 
       top = !obstruct ? 0.0 : topPadding;
     }

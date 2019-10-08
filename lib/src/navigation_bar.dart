@@ -165,6 +165,8 @@ bool _isTransitionable(BuildContext context) {
   return route is PageRoute && !route.fullscreenDialog;
 }
 
+
+
 /// An iOS-styled navigation bar.
 ///
 /// The navigation bar is a toolbar that minimally consists of a widget, normally
@@ -199,14 +201,22 @@ bool _isTransitionable(BuildContext context) {
 /// Use [transitionBetweenRoutes] or [heroTag] to customize the transition
 /// behavior for multiple navigation bars per route.
 ///
+/// When used in a [CupertinoPageScaffold], [CupertinoPageScaffold.navigationBar]
+/// has its text scale factor set to 1.0 and does not respond to text scale factor
+/// changes from the operating system, to match the native iOS behavior. To override
+/// this behavior, wrap each of the `navigationBar`'s components inside a [MediaQuery]
+/// with the desired [MediaQueryData.textScaleFactor] value. The text scale factor
+/// value from the operating system can be retrieved in many ways, such as querying
+/// [MediaQuery.textScaleFactorOf] against [CupertinoApp]'s [BuildContext].
+///
 /// See also:
 ///
 ///  * [CupertinoPageScaffold], a page layout helper typically hosting the
-///    [CupertinoNavigationBar].
+///    [CupertinoNavigationBarWithBrightness].
 ///  * [CupertinoSliverNavigationBar] for a navigation bar to be placed in a
 ///    scrolling list and that supports iOS-11-style large titles.
-class CupertinoNavigationBarWithBrightness extends StatefulWidget
-    implements ObstructingPreferredSizeWidget {
+class CupertinoNavigationBarWithBrightness extends StatefulWidget implements ObstructingPreferredSizeWidget {
+
   /// Creates a navigation bar in the iOS style.
   const CupertinoNavigationBarWithBrightness({
     Key key,
@@ -223,18 +233,20 @@ class CupertinoNavigationBarWithBrightness extends StatefulWidget
     this.actionsForegroundColor,
     this.transitionBetweenRoutes = true,
     this.heroTag = _defaultHeroTag,
-  })  : assert(automaticallyImplyLeading != null),
-        assert(automaticallyImplyMiddle != null),
-        assert(transitionBetweenRoutes != null),
-        assert(
-            heroTag != null,
-            'heroTag cannot be null. Use transitionBetweenRoutes = false to '
-            'disable Hero transition on this navigation bar.'),
-        assert(
-            !transitionBetweenRoutes || identical(heroTag, _defaultHeroTag),
-            'Cannot specify a heroTag override if this navigation bar does not '
-            'transition due to transitionBetweenRoutes = false.'),
-        super(key: key);
+  }) : assert(automaticallyImplyLeading != null),
+       assert(automaticallyImplyMiddle != null),
+       assert(transitionBetweenRoutes != null),
+       assert(
+         heroTag != null,
+         'heroTag cannot be null. Use transitionBetweenRoutes = false to '
+         'disable Hero transition on this navigation bar.'
+       ),
+       assert(
+         !transitionBetweenRoutes || identical(heroTag, _defaultHeroTag),
+         'Cannot specify a heroTag override if this navigation bar does not '
+         'transition due to transitionBetweenRoutes = false.'
+       ),
+       super(key: key);
 
   /// {@template flutter.cupertino.navBar.leading}
   /// Widget to place at the start of the navigation bar. Normally a back button
@@ -263,6 +275,11 @@ class CupertinoNavigationBarWithBrightness extends StatefulWidget
   /// This value cannot be null.
   /// {@endtemplate}
   final bool automaticallyImplyLeading;
+
+    /// The brightness of the navigation bar.
+  ///
+  /// If this property is null then [backgroundColor]'s luminance is considered.
+  final Brightness brightness;
 
   /// Controls whether we should try to imply the middle widget if null.
   ///
@@ -310,11 +327,6 @@ class CupertinoNavigationBarWithBrightness extends StatefulWidget
   /// Defaults to [CupertinoTheme]'s `barBackgroundColor` if null.
   /// {@endtemplate}
   final Color backgroundColor;
-
-  /// The brightness of the navigation bar.
-  ///
-  /// If this property is null then [backgroundColor]'s luminance is considered.
-  final Brightness brightness;
 
   /// {@template flutter.cupertino.navBar.padding}
   /// Padding for the contents of the navigation bar.
@@ -388,7 +400,11 @@ class CupertinoNavigationBarWithBrightness extends StatefulWidget
 
   /// True if the navigation bar's background color has no transparency.
   @override
-  bool get fullObstruction => backgroundColor == null ? null : backgroundColor.alpha == 0xFF;
+  bool shouldFullyObstruct(BuildContext context) {
+    final Color backgroundColor = CupertinoDynamicColor.resolve(this.backgroundColor, context)
+                               ?? CupertinoTheme.of(context).barBackgroundColor;
+    return backgroundColor.alpha == 0xFF;
+  }
 
   @override
   Size get preferredSize {
@@ -404,8 +420,7 @@ class CupertinoNavigationBarWithBrightness extends StatefulWidget
 // A state class exists for the nav bar so that the keys of its sub-components
 // don't change when rebuilding the nav bar, causing the sub-components to
 // lose their own states.
-class _CupertinoNavigationBarWithBrightnessState
-    extends State<CupertinoNavigationBarWithBrightness> {
+class _CupertinoNavigationBarWithBrightnessState extends State<CupertinoNavigationBarWithBrightness> {
   _NavigationBarStaticComponentsKeys keys;
 
   @override
@@ -417,7 +432,7 @@ class _CupertinoNavigationBarWithBrightnessState
   @override
   Widget build(BuildContext context) {
     final Color backgroundColor =
-        widget.backgroundColor ?? CupertinoTheme.of(context).barBackgroundColor;
+      CupertinoDynamicColor.resolve(widget.backgroundColor, context) ?? CupertinoTheme.of(context).barBackgroundColor;
 
     final _NavigationBarStaticComponents components = _NavigationBarStaticComponents(
       keys: keys,
@@ -446,15 +461,18 @@ class _CupertinoNavigationBarWithBrightnessState
       ),
     );
 
+    final Color actionsForegroundColor = CupertinoDynamicColor.resolve(
+      widget.actionsForegroundColor, // ignore: deprecated_member_use_from_same_package
+      context,
+    );
     if (!widget.transitionBetweenRoutes || !_isTransitionable(context)) {
       // Lint ignore to maintain backward compatibility.
-      return _wrapActiveColor(widget.actionsForegroundColor, context,
-          navBar); // ignore: deprecated_member_use_from_same_package
+      return _wrapActiveColor(actionsForegroundColor, context, navBar);
     }
 
     return _wrapActiveColor(
       // Lint ignore to maintain backward compatibility.
-      widget.actionsForegroundColor, // ignore: deprecated_member_use_from_same_package
+      actionsForegroundColor,
       context,
       Builder(
         // Get the context that might have a possibly changed CupertinoTheme.
